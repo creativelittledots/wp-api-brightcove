@@ -1,0 +1,14 @@
+{
+    "name": "creativelittledots/wp-api-brightcove",
+    "description": "A plugin that works with WP Rest API to pull in video uploads into Brightcove",
+    "require": {
+        "brightcove/api": "^0.9.0",
+        "aws/aws-sdk-php": "^3.25"
+    },
+    "authors": [
+        {
+            "name": "terenceneedssurgery",
+            "email": "terence@ineedsurgery.com"
+        }
+    ]
+}
