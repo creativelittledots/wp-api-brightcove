@@ -4,7 +4,7 @@
 	 * Plugin Name: WP API BrightCove
 	 * Plugin URI: https://github.com/creativelittledots/wp-api-brightcove
 	 * Version: 1.0.0
-	 * Description: A Wordpress Plugin that works integrates with WP Rest API 'Create Post' endpoint to push in video file uploads into Brightcove Dynamic Ingest API
+	 * Description: A Wordpress Plugin that integrates with WP Rest API 'Create Post' endpoint to push in video file uploads into Brightcove Dynamic Ingest API
 	 * Author: Creative Little Dots
 	 *
 	 * @author  Terence O'Donoghue <terence@creativelittledots.co.uk>
