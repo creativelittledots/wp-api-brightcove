@@ -33,9 +33,9 @@
 		private static $instance;
 		private $upload_key = 'brightcove_video_upload';
 		private $meta_key = 'brightcove_video';
-		private $account_id = '2346984621001';
-		private $client_id = '8344c967-f11b-476a-ba54-d3d48f88c925';	
-		private $client_secret = '-34jx48iq7SJm3oHi6oDD_sN0fYwroVtV6-86FDMtMa-S7Kt0wkCJYDwPbU4XOyEd5BsKYk-0PrwJHoGxIaSAw';	
+		private $account_id = '';
+		private $client_id = '';	
+		private $client_secret = '';	
 		private $allowed_extensions = array('video/webm', 'video/mp4', 'video/ogv');
 	
 		public static function init() {
@@ -81,7 +81,23 @@
 			
 		}
 		
+		public function saveSettings() {
+			
+			if( ! empty( $_POST['brightcove_api'] ) ) {
+				
+				$brightcove_api_settings = $_POST['brightcove_api'];
+				
+				$brightcove_api_settings['allowed_extensions'] = array_map( 'trim', explode( ',', $brightcove_api_settings['allowed_extensions'] ) );
+				
+				update_option( 'brightcove_api_settings', $brightcove_api_settings );
+				
+			}
+			
+		}
+		
 		public function addSettingsPageView() {
+			
+			$this->saveSettings();
 			
 			ob_start();
 			
@@ -105,7 +121,7 @@
 				
 				if( ! in_array( $file['type'], $this->allowed_extensions ) ) {
 					
-					$this->jsonError( 'rest_no_incorrect_format', __( "{$this->upload_key} is an incorrect file format for Brightcove." ), 401 );
+					$this->jsonError( 'rest_no_incorrect_format', __( "{$this->upload_key} is an incorrect file format for Brightcove. Allowed mime types include " . implode( ', ', $this->allowed_extensions ) ), 401 );
 					
 				}
 				
@@ -143,32 +159,31 @@
 				
 				    $response = (object) $di->uploadUrls($video->getId(), $filename);
 				    
+				    $credentials = array(
+			            'key'    => $response->access_key_id,
+			            'secret' => $response->secret_access_key,
+			            'token'	 => $response->session_token
+			        );
+				    
 				    $s3 = new \Aws\S3\S3Client([
 					    'version' => 'latest',
 					    'region'  => 'us-east-1',
-					    'credentials' => array(
-				            'upload_key'    => $response->access_upload_key_id,
-				            'secret' => $response->secret_access_upload_key,
-				            'token'	 => $response->session_token
-				        )
+					    'credentials' => $credentials
 					]);
 					
 					$params = array(
 				        'bucket' => $response->bucket,
-				        'upload_key' => $response->object_upload_key
+				        'key' => $response->object_key
 				    );
 				    
 				    $uploader = new \Aws\S3\MultipartUploader($s3, $file['tmp_name'], $params);
+				    
 					
 					$uploadResponse = $uploader->upload();
 				    
 				    $request = \Brightcove\API\Request\IngestRequest::createRequest($response->api_request_url, 'high-resolution');
 						
 					$di->createIngest($video->getId(), $request);
-					
-					var_dump($video);
-					
-					wp_die();
 				    
 				} catch (\Exception $e) {
 					
