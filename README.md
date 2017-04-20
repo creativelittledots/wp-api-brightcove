@@ -18,7 +18,7 @@ form.append("brightcove_video_upload", "blank.m4v"); // path to file on device
 
 // 'brightcove_video_upload' is our uplod key as per settings
 
-var key = 'some-api-token-key-if-you-are-using-auth';
+var	key = 'some-api-token-key-if-you-are-using-auth',
 	settings = {
 	"async": true,
 	"crossDomain": true,
