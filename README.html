@@ -23,8 +23,9 @@ form.append(&quot;brightcove_video_upload&quot;, &quot;blank.m4v&quot;); // path
 
 // 'brightcove_video_upload' is our uplod key as per settings
 
-var key = 'some-api-token-key-if-you-are-using-auth',
-    settings = {
+var key = 'some-api-token-key-if-you-are-using-auth';
+
+var settings = {
     &quot;async&quot;: true,
     &quot;crossDomain&quot;: true,
     &quot;url&quot;: &quot;http://domain.com/api/wp-json/wp/v2/posts&quot;,
@@ -36,7 +37,7 @@ var key = 'some-api-token-key-if-you-are-using-auth',
     &quot;contentType&quot;: false,
     &quot;mimeType&quot;: &quot;multipart/form-data&quot;,
     &quot;data&quot;: form
-}
+};
 
 $.ajax(settings).done(function (response) {
     console.log(response);
