@@ -14,7 +14,7 @@ var form = new FormData();
 form.append("content", "Lorem Ipsum");
 form.append("title", "Some Title");
 form.append("status", "publish");
-form.append("brightcove_video_upload", "blank.m4v");
+form.append("brightcove_video_upload", "blank.m4v"); // path to file on device
 
 // 'brightcove_video_upload' is our uplod key as per settings
 
@@ -36,7 +36,7 @@ settings = {
 }
 
 $.ajax(settings).done(function (response) {
-  console.log(response);
+	console.log(response);
 });
 
 ``` 
