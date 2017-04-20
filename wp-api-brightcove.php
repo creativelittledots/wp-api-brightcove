@@ -56,6 +56,20 @@
 			
 			add_action( 'admin_menu', array($this, 'addSettingsPage' ) );
 			
+			add_filter( 'rest_prepare_post', array($this, 'outputVideoMeta'), 10, 3);
+			
+		}
+		
+		public function outputVideoMeta($response, $post) {
+			
+			if( $meta = get_post_meta( $post->ID, $this->meta_key, true ) ) {
+			
+				$response->data[$this->meta_key] = $meta;
+				
+			}
+			
+			return $response;
+			
 		}
 		
 		public function addSettingsPage() {
