@@ -15,34 +15,34 @@
 <p>Then make a request to your api:</p>
 
 <pre><code class="js">
-    var form = new FormData();
-    form.append(&quot;content&quot;, &quot;Lorem Ipsum&quot;);
-    form.append(&quot;title&quot;, &quot;Some Title&quot;);
-    form.append(&quot;status&quot;, &quot;publish&quot;);
-    form.append(&quot;brightcove_video_upload&quot;, &quot;blank.m4v&quot;);
-    
-    // 'brightcove_video_upload' is our uplod key as per settings
-    
-    var key = 'some-api-token-key-if-you-are-using-auth';
-    settings = {
-      &quot;async&quot;: true,
-      &quot;crossDomain&quot;: true,
-      &quot;url&quot;: &quot;http://domain.com/api/wp-json/wp/v2/posts&quot;,
-      &quot;method&quot;: &quot;POST&quot;,
-      &quot;headers&quot;: {
+var form = new FormData();
+form.append(&quot;content&quot;, &quot;Lorem Ipsum&quot;);
+form.append(&quot;title&quot;, &quot;Some Title&quot;);
+form.append(&quot;status&quot;, &quot;publish&quot;);
+form.append(&quot;brightcove_video_upload&quot;, &quot;blank.m4v&quot;);
+
+// 'brightcove_video_upload' is our uplod key as per settings
+
+var key = 'some-api-token-key-if-you-are-using-auth';
+settings = {
+    &quot;async&quot;: true,
+    &quot;crossDomain&quot;: true,
+    &quot;url&quot;: &quot;http://domain.com/api/wp-json/wp/v2/posts&quot;,
+    &quot;method&quot;: &quot;POST&quot;,
+    &quot;headers&quot;: {
         &quot;authorization&quot;: &quot;Bearer &quot; + key,
         &quot;cache-control&quot;: &quot;no-cache&quot;,
         &quot;postman-token&quot;: &quot;bd312945-02aa-4434-b80b-d99556e4b135&quot;
-      },
-      &quot;processData&quot;: false,
-      &quot;contentType&quot;: false,
-      &quot;mimeType&quot;: &quot;multipart/form-data&quot;,
-      &quot;data&quot;: form
-    }
-    
-    $.ajax(settings).done(function (response) {
-      console.log(response);
-    });
+    },
+    &quot;processData&quot;: false,
+    &quot;contentType&quot;: false,
+    &quot;mimeType&quot;: &quot;multipart/form-data&quot;,
+    &quot;data&quot;: form
+}
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+});
 
 </code></pre>
 
