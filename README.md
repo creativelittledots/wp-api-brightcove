@@ -25,9 +25,7 @@ settings = {
 	"url": "http://domain.com/api/wp-json/wp/v2/posts",
 	"method": "POST",
 	"headers": {
-		"authorization": "Bearer " + key,
-		"cache-control": "no-cache",
-		"postman-token": "bd312945-02aa-4434-b80b-d99556e4b135"
+		"authorization": "Bearer " + key
 	},
 	"processData": false,
 	"contentType": false,
