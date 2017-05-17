@@ -78,20 +78,31 @@
 			
 		}
 		
-		public function getSettings() {
+		public function loadSettings() {
 			
 			$settings = get_option( 'brightcove_api_settings' );
 			
-			$settings = is_array($settings) ? $settings : array();
+			$this->upload_key = ! empty( $settings['upload_key'] ) ? $settings['upload_key'] : $this->upload_key;
+			$this->meta_key = ! empty( $settings['meta_key'] ) ? $settings['meta_key'] : $this->meta_key;
+			$this->account_id = ! empty( $settings['account_id'] ) ? $settings['account_id'] : $this->account_id;
+			$this->client_id = ! empty( $settings['client_id'] ) ? $settings['client_id'] : $this->client_id;
+			$this->client_secret = ! empty( $settings['client_secret'] ) ? $settings['client_secret'] : $this->client_secret;
+			$this->allowed_extensions = ! empty( $settings['allowed_extensions'] ) ? $settings['allowed_extensions'] : $this->allowed_extensions;
 			
-			return (object) array_merge(array(
+		}
+		
+		public function getSettings() {
+			
+			$this->loadSettings();
+			
+			return array(
 				'upload_key' => $this->upload_key,
 				'meta_key' => $this->meta_key,
 				'account_id' => $this->account_id,
 				'client_id' => $this->client_id,
 				'client_secret' => $this->client_secret,
 				'allowed_extensions' => $this->allowed_extensions,
-			), $settings);
+			);
 			
 		}
 		
@@ -128,6 +139,8 @@
 		}
 
 		public function processRequest($post, $request, $create) {
+			
+			$this->loadSettings();
 			
 			if( ! empty( $_FILES[ $this->upload_key ] ) ) {
 				
