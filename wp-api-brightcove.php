@@ -54,9 +54,23 @@
 			
 			add_action( 'rest_insert_post', array($this, 'processRequest'), 10, 3);
 			
+			add_action( 'gform_after_create_post', array( $this, 'uploadGformVideo'), 10, 3 );
+			
 			add_action( 'admin_menu', array($this, 'addSettingsPage' ) );
 			
 			add_filter( 'rest_prepare_post', array($this, 'outputVideoMeta'), 10, 3);
+			
+		}
+		
+		public function uploadGformVideo( $post_id, $entry, $form ) {
+			
+			$this->loadSettings();
+			
+			if( $video = get_post_meta( $post_id, $this->meta_key, true) ) {
+				
+				$this->processFile( $post_id, basename( $video ), $video );
+				
+			}
 			
 		}
 		
@@ -126,7 +140,7 @@
 			
 			ob_start();
 			
-			$settings = $this->getSettings();
+			$settings = (object) $this->getSettings();
 			
 			include( 'views/settings.php' );
 			
@@ -172,45 +186,7 @@
 				
 				try {
 					
-					$filename = basename( $file['name'] );
-					
-					$client = \Brightcove\API\Client::authorize($this->client_id, $this->client_secret);
-					$cms = new \Brightcove\API\CMS($client, $this->account_id);
-					$di = new DI($client, $this->account_id); 
-					
-					$video = new \Brightcove\Object\Video\Video();
-					$video->setName($filename);
-					$video = $cms->createVideo($video);
-					
-					update_post_meta( $post->ID, $this->meta_key, $this->getUrl( $video->getId() ));
-				
-				    $response = (object) $di->uploadUrls($video->getId(), $filename);
-				    
-				    $credentials = array(
-			            'key'    => $response->access_key_id,
-			            'secret' => $response->secret_access_key,
-			            'token'	 => $response->session_token
-			        );
-				    
-				    $s3 = new \Aws\S3\S3Client([
-					    'version' => 'latest',
-					    'region'  => 'us-east-1',
-					    'credentials' => $credentials
-					]);
-					
-					$params = array(
-				        'bucket' => $response->bucket,
-				        'key' => $response->object_key
-				    );
-				    
-				    $uploader = new \Aws\S3\MultipartUploader($s3, $file['tmp_name'], $params);
-				    
-					
-					$uploadResponse = $uploader->upload();
-				    
-				    $request = \Brightcove\API\Request\IngestRequest::createRequest($response->api_request_url, 'high-resolution');
-						
-					$di->createIngest($video->getId(), $request);
+					$this->processFile( $post->ID, basename( $file['name'] ), $file['tmp_name'] );
 				    
 				} catch (\Exception $e) {
 					
@@ -220,6 +196,47 @@
 								
 			}
 			
+		}
+		
+		public function processFile($post_id, $filename, $url) {
+					
+			$client = \Brightcove\API\Client::authorize($this->client_id, $this->client_secret);
+			$cms = new \Brightcove\API\CMS($client, $this->account_id);
+			$di = new DI($client, $this->account_id); 
+			
+			$video = new \Brightcove\Object\Video\Video();
+			$video->setName($filename);
+			$video = $cms->createVideo($video);
+			
+			update_post_meta( $post_id, $this->meta_key, $this->getUrl( $video->getId() ));
+		
+		    $response = (object) $di->uploadUrls($video->getId(), $filename);
+		    
+		    $credentials = array(
+	            'key'    => $response->access_key_id,
+	            'secret' => $response->secret_access_key,
+	            'token'	 => $response->session_token
+	        );
+		    
+		    $s3 = new \Aws\S3\S3Client([
+			    'version' => 'latest',
+			    'region'  => 'us-east-1',
+			    'credentials' => $credentials
+			]);
+			
+			$params = array(
+		        'bucket' => $response->bucket,
+		        'key' => $response->object_key
+		    );
+		    
+		    $uploader = new \Aws\S3\MultipartUploader($s3, $url, $params);
+			
+			$uploadResponse = $uploader->upload();
+		    
+		    $request = \Brightcove\API\Request\IngestRequest::createRequest($response->api_request_url, 'high-resolution');
+				
+			$di->createIngest($video->getId(), $request);
+					
 		}
 		
 		/**
