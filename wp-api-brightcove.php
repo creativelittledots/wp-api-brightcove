@@ -52,7 +52,11 @@
 		
 		public function __construct() {
 			
-			add_action( 'rest_insert_post', array($this, 'processRequest'), 10, 3);
+			foreach ( get_post_types() as $post_type ) {
+			
+				add_action( 'rest_insert_' . $post_type, array($this, 'processRequest'), 10, 3);
+				
+			}
 			
 			add_action( 'gform_after_create_post', array( $this, 'uploadGformVideo'), 10, 3 );
 			
